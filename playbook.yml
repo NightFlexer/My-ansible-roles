@@ -1,0 +1,12 @@
+---
+- name: PHP + Apach or Nginx from Containers
+  hosts: all
+  become: yes
+
+  roles:
+    - role: deploy_nginx_php5.6
+      tags: nginx5.6
+    - role: deploy_nginx_php7.2
+      tags: nginx7.2
+    - role: deploy_apache_php7
+      tags: apache

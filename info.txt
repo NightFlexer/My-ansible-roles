@@ -1,0 +1,89 @@
+﻿Конфигурационный файл Vagrantfile разворачивает виртуальную машину, устанавливает docker engine.
+Плейбук для ansible имеет несколько ролей.
+Роли собирают контейнер который содержит php-fpm определённой версии и один из web серверов, дополняют контейнер конфигами.
+Контейнер с nginx запускается на 80 порту, с apache на 8888.
+Роли из плейбука запускаются с помощью тега ролей.
+Пример: ansible-playbook --tags nginx5.6 playbook.yml
+Доступные теги: nginx5.6; nginx7.2; apache
+
+tree
+.
++-- ansible.cfg
++-- hosts.txt
++-- playbook_BUM.yml
++-- ports.conf
+L-- roles
+    +-- deploy_apache_php7
+    ¦   +-- defaults
+    ¦   ¦   L-- main.yml
+    ¦   +-- files
+    ¦   ¦   +-- 000-default.conf
+    ¦   ¦   +-- apache.conf
+    ¦   ¦   +-- DockerfileApache
+    ¦   ¦   +-- php-fpm.conf
+    ¦   ¦   +-- php.ini
+    ¦   ¦   +-- start.sh
+    ¦   ¦   +-- supervisord.conf
+    ¦   ¦   +-- test.html
+    ¦   ¦   +-- test.php
+    ¦   ¦   +-- www.conf
+    ¦   ¦   L-- xdebug.ini
+    ¦   +-- handlers
+    ¦   ¦   L-- main.yml
+    ¦   +-- meta
+    ¦   ¦   L-- main.yml
+    ¦   +-- README.md
+    ¦   +-- tasks
+    ¦   ¦   L-- main.yml
+    ¦   +-- templates
+    ¦   +-- tests
+    ¦   ¦   +-- inventory
+    ¦   ¦   L-- test.yml
+    ¦   L-- vars
+    ¦       L-- main.yml
+    +-- deploy_nginx_php5.6
+    ¦   +-- defaults
+    ¦   ¦   L-- main.yml
+    ¦   +-- files
+    ¦   ¦   +-- Dockerfile5.6
+    ¦   ¦   +-- entrypoint.sh
+    ¦   ¦   +-- info.html
+    ¦   ¦   +-- info.php
+    ¦   ¦   L-- nginx-site.conf
+    ¦   +-- handlers
+    ¦   ¦   L-- main.yml
+    ¦   +-- meta
+    ¦   ¦   L-- main.yml
+    ¦   +-- README.md
+    ¦   +-- tasks
+    ¦   ¦   L-- main.yml
+    ¦   +-- templates
+    ¦   +-- tests
+    ¦   ¦   +-- inventory
+    ¦   ¦   L-- test.yml
+    ¦   L-- vars
+    ¦       L-- main.yml
+    L-- deploy_nginx_php7.2
+        +-- defaults
+        ¦   L-- main.yml
+        +-- files
+        ¦   +-- Dockerfile7.2
+        ¦   +-- entrypoint.sh
+        ¦   +-- info.html
+        ¦   +-- info.php
+        ¦   L-- nginx-site.conf
+        +-- handlers
+        ¦   L-- main.yml
+        +-- meta
+        ¦   L-- main.yml
+        +-- README.md
+        +-- tasks
+        ¦   L-- main.yml
+        +-- templates
+        +-- tests
+        ¦   +-- inventory
+        ¦   L-- test.yml
+        L-- vars
+            L-- main.yml
+
+28 directories, 49 files
