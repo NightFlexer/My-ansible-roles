@@ -1,0 +1,59 @@
+FROM ubuntu:16.04
+MAINTAINER 1111111
+
+# No tty
+ENV DEBIAN_FRONTEND noninteractive
+
+# Apache 2.4 + PHP-7.0-FPM
+RUN apt-get update \
+    # Tools
+    && apt-get -y --no-install-recommends install \
+        curl \
+        ca-certificates \
+        nano \
+    # Supervisor
+    && apt-get -y --no-install-recommends install \
+        supervisor \
+    # MySQL Client
+    && apt-get -y --no-install-recommends install \
+        mariadb-client-10.0 \
+    # Install Apache + PHP
+    && apt-get -y --no-install-recommends install \
+        apache2 \
+        php-fpm php7.0-mysql php7.0-xml php7.0-gd php7.0-mbstring php7.0-bcmath php7.0-zip php-memcache \
+        php7.0-curl \
+        php-xdebug \
+    # Configure Apache + PHP
+    && a2enconf php7.0-fpm \
+    && a2enmod proxy \
+    && a2enmod proxy_fcgi \
+    && a2enmod rewrite \
+    # Clean
+    && rm -rf /var/lib/apt/lists/*
+
+RUN chown www-data:www-data /var/www
+
+# Supervisor
+RUN mkdir -p /run/php/
+COPY ./supervisord.conf /etc/supervisor/supervisord.conf
+#COPY ./conf.d/ /etc/supervisor/conf.d/ !
+COPY ./apache.conf /etc/supervisor/conf.d/
+COPY ./php-fpm.conf /etc/supervisor/conf.d/
+
+# Apache Configuration
+COPY ./000-default.conf /etc/apache2/sites-available/000-default.conf
+
+# PHP Configuration
+COPY ./php.ini /etc/php/7.0/fpm/php.ini
+COPY ./www.conf /etc/php/7.0/fpm/pool.d/www.conf
+COPY ./xdebug.ini /etc/php/7.0/mods-available/xdebug.ini
+
+COPY ./test.html /var/www/html/docroot/
+COPY ./test.php /var/www/html/docroot/
+
+COPY ./start.sh /start.sh
+RUN chmod 755 /start.sh
+
+EXPOSE 80
+
+CMD ["/bin/bash", "/start.sh"]

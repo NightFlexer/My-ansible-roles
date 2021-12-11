@@ -1,0 +1,18 @@
+---
+# tasks file for deploy_nginx_php7.2
+- name: Copy config
+  copy: src={{ item }} dest={{ home_dir }} mode=0555
+  loop:
+    - "Dockerfile7.2"
+    - "entrypoint.sh"
+    - "info.php"
+    - "info.html"
+    - "nginx-site.conf"
+
+- name: Build DockerFiles
+  shell: cd /home/vagrant | docker build -t php7.2:v1.1 -f ./Dockerfile7.2 ./
+  register: ps
+
+- name: Run DockerFiles
+  shell: docker run -d -p 80:80 php7.2:v1.1
+  register: ps

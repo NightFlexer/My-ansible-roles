@@ -1,0 +1,23 @@
+---
+# tasks file for deploy_nginx_php5.6
+
+- name: Copy config
+  copy: src={{ item }} dest={{ home_dir }} mode=0775
+  loop:
+    - "Dockerfile5.6"
+    - "entrypoint.sh"
+    - "info.php"
+    - "info.html"
+    - "nginx-site.conf"
+    - "kill.sh"
+
+- name: Build DockerFiles
+  shell: cd /home/vagrant | docker build -t php5.6:v1.1 -f ./Dockerfile5.6 ./
+  register: ps
+
+- name: Kill
+  shell: /home/vagrant/kill.sh
+
+- name: Run DockerFiles
+  shell: docker run -d -p 80:80 php5.6:v1.1
+  register: ps

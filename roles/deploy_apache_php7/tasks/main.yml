@@ -1,0 +1,30 @@
+---
+# tasks file for deploy_apache_php7
+- name: Copy config
+  copy: src={{ item }} dest={{ home_dir }} mode=0775
+  loop:
+    - "000-default.conf"
+    - "DockerfileApache"
+    - "php.ini"
+    - "start.sh"
+    - "supervisord.conf"
+    - "test.html"
+    - "test.php"
+    - "www.conf"
+    - "xdebug.ini"
+    - "apache.conf"
+    - "php-fpm.conf"
+    - "kill.sh"
+
+- name: Build DockerFiles
+  shell: cd /home/vagrant/apache | docker build -t apache:v1.1 -f ./DockerfileApache ./
+  register: ps
+  
+
+- name: Run DockerFiles
+  shell: docker run -d -p 8888:80 apache:v1.1
+  register: ps
+  ignore_errors: yes
+  
+    
+
